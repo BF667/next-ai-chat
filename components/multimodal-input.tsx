@@ -257,7 +257,7 @@ function PureMultimodalInput({
       />
 
       <PromptInput
-        className="border border-transparent shadow-lg transition-all duration-200 shadow-black/10 hover:border-primary/20 focus-within:border-primary/30 focus-within:shadow-xl focus-within:shadow-primary/20"
+        className="border border-input bg-background shadow-sm transition-all duration-200 focus-within:ring-2 focus-within:ring-ring/20 focus-within:border-ring/30 rounded-lg"
         onSubmit={(event) => {
           event.preventDefault();
           if (status !== 'ready') {
@@ -270,7 +270,7 @@ function PureMultimodalInput({
         {(attachments.length > 0 || uploadQueue.length > 0) && (
           <div
             data-testid="attachments-preview"
-            className="flex overflow-x-scroll flex-row gap-2 items-end px-3 py-2"
+            className="flex overflow-x-auto flex-row gap-2 p-3 pb-0"
           >
             {attachments.map((attachment) => (
               <PreviewAttachment
@@ -308,15 +308,13 @@ function PureMultimodalInput({
           value={input}
           onChange={handleInput}
           minHeight={48}
-          maxHeight={48}
-          disableAutoResize={true}
-          style={{ height: '48px', minHeight: '48px', maxHeight: '48px' }}
-          className="text-sm resize-none py-1 px-3 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]"
+          maxHeight={200}
+          className="text-sm resize-none py-3 px-4 flex-1 min-h-[48px] max-h-[200px]"
           rows={1}
           autoFocus
         />
-        <PromptInputToolbar className="px-2 py-1">
-          <PromptInputTools className="gap-2">
+        <PromptInputToolbar className="flex items-center p-2">
+          <PromptInputTools className="flex items-center gap-1 mr-auto">
             <AttachmentsButton fileInputRef={fileInputRef} status={status} />
           </PromptInputTools>
           {status === 'submitted' ? (
@@ -325,8 +323,7 @@ function PureMultimodalInput({
             <PromptInputSubmit
               status={status}
               disabled={!input.trim() || uploadQueue.length > 0}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground size-8"
-              size="sm"
+              className="bg-primary hover:bg-primary/90 text-primary-foreground size-9 rounded-full"
             />
           )}
         </PromptInputToolbar>
@@ -358,7 +355,7 @@ function PureAttachmentsButton({
   return (
     <Button
       data-testid="attachments-button"
-      className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
+      className="size-8 p-1.5 rounded-full hover:bg-accent"
       onClick={(event) => {
         event.preventDefault();
         fileInputRef.current?.click();
@@ -366,7 +363,7 @@ function PureAttachmentsButton({
       disabled={status !== 'ready'}
       variant="ghost"
     >
-      <PaperclipIcon size={14} />
+      <PaperclipIcon size={16} />
     </Button>
   );
 }
@@ -383,14 +380,14 @@ function PureStopButton({
   return (
     <Button
       data-testid="stop-button"
-      className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
+      className="size-9 rounded-full bg-destructive hover:bg-destructive/90 text-destructive-foreground"
       onClick={(event) => {
         event.preventDefault();
         stop();
         setMessages((messages) => messages);
       }}
     >
-      <StopIcon size={14} />
+      <StopIcon size={16} />
     </Button>
   );
 }

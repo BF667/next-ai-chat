@@ -62,30 +62,31 @@ const PurePreviewMessage = ({
     <AnimatePresence>
       <motion.div
         data-testid={`message-${message.role}`}
-        className="px-4 mx-auto w-full max-w-3xl group/message"
+        className="px-2 mx-auto w-full max-w-3xl group/message"
         initial={{ y: 5, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         data-role={message.role}
       >
         <div
           className={cn(
-            'flex gap-4 w-full group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl',
+            'flex gap-3 w-full group-data-[role=user]/message:ml-auto',
             {
+              'max-w-[90%] md:max-w-[85%]': message.role === 'user',
+              'max-w-[90%] md:max-w-[85%]': message.role === 'assistant',
               'w-full': mode === 'edit',
-              'group-data-[role=user]/message:w-fit': mode !== 'edit',
             },
           )}
         >
           {message.role === 'assistant' && (
-            <div className="flex justify-center items-center rounded-full ring-1 size-8 shrink-0 ring-border bg-background">
+            <div className="flex justify-center items-center rounded-full bg-primary text-primary-foreground size-8 shrink-0">
               <div className="translate-y-px">
-                <SparklesIcon size={14} />
+                <SparklesIcon size={16} />
               </div>
             </div>
           )}
 
           <div
-            className={cn('flex flex-col gap-4 w-full', {
+            className={cn('flex flex-col gap-3 w-full', {
               'min-h-96': message.role === 'assistant' && requiresScrollPadding,
             })}
           >
@@ -131,12 +132,13 @@ const PurePreviewMessage = ({
                             <Button
                               data-testid="message-edit-button"
                               variant="ghost"
-                              className="px-2 rounded-full opacity-0 h-fit text-muted-foreground group-hover/message:opacity-100"
+                              size="icon"
+                              className="h-6 w-6 rounded-full opacity-0 text-muted-foreground group-hover/message:opacity-100 transition-opacity"
                               onClick={() => {
                                 setMode('edit');
                               }}
                             >
-                              <PencilEditIcon />
+                              <PencilEditIcon size={14} />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>Edit message</TooltipContent>
@@ -145,11 +147,15 @@ const PurePreviewMessage = ({
 
                       <MessageContent
                         data-testid="message-content"
-                        className={cn('justify-start items-start text-left', {
-                          'bg-primary text-primary-foreground':
-                            message.role === 'user',
-                          'bg-transparent': message.role === 'assistant',
-                        })}
+                        className={cn(
+                          'justify-start items-start text-left rounded-xl px-4 py-3 text-sm',
+                          {
+                            'bg-primary text-primary-foreground self-end':
+                              message.role === 'user',
+                            'bg-muted/50 dark:bg-muted/70 self-start':
+                              message.role === 'assistant',
+                          }
+                        )}
                       >
                         <Response>{sanitizeText(part.text)}</Response>
                       </MessageContent>
@@ -159,16 +165,18 @@ const PurePreviewMessage = ({
 
                 if (mode === 'edit') {
                   return (
-                    <div key={key} className="flex flex-row gap-2 items-start">
+                    <div key={key} className="flex flex-row gap-2 items-start w-full">
                       <div className="size-8" />
 
-                      <MessageEditor
-                        key={message.id}
-                        message={message}
-                        setMode={setMode}
-                        setMessages={setMessages}
-                        regenerate={regenerate}
-                      />
+                      <div className="flex-1">
+                        <MessageEditor
+                          key={message.id}
+                          message={message}
+                          setMode={setMode}
+                          setMessages={setMessages}
+                          regenerate={regenerate}
+                        />
+                      </div>
                     </div>
                   );
                 }
@@ -209,7 +217,7 @@ const PurePreviewMessage = ({
                         <ToolOutput
                           output={
                             'error' in part.output ? (
-                              <div className="p-2 text-red-500 rounded border">
+                              <div className="p-3 text-red-500 rounded-lg border bg-destructive/10">
                                 Error: {String(part.output.error)}
                               </div>
                             ) : (
@@ -241,7 +249,7 @@ const PurePreviewMessage = ({
                         <ToolOutput
                           output={
                             'error' in part.output ? (
-                              <div className="p-2 text-red-500 rounded border">
+                              <div className="p-3 text-red-500 rounded-lg border bg-destructive/10">
                                 Error: {String(part.output.error)}
                               </div>
                             ) : (
@@ -274,7 +282,7 @@ const PurePreviewMessage = ({
                         <ToolOutput
                           output={
                             'error' in part.output ? (
-                              <div className="p-2 text-red-500 rounded border">
+                              <div className="p-3 text-red-500 rounded-lg border bg-destructive/10">
                                 Error: {String(part.output.error)}
                               </div>
                             ) : (
@@ -304,6 +312,14 @@ const PurePreviewMessage = ({
               />
             )}
           </div>
+
+          {message.role === 'user' && (
+            <div className="flex justify-center items-center rounded-full bg-muted size-8 shrink-0">
+              <div className="translate-y-px">
+                <div className="h-4 w-4 rounded-full bg-foreground"></div>
+              </div>
+            </div>
+          )}
         </div>
       </motion.div>
     </AnimatePresence>
@@ -330,26 +346,26 @@ export const ThinkingMessage = () => {
   return (
     <motion.div
       data-testid="message-assistant-loading"
-      className="px-4 mx-auto w-full max-w-3xl group/message min-h-96"
+      className="px-2 mx-auto w-full max-w-3xl group/message"
       initial={{ y: 5, opacity: 0 }}
       animate={{ y: 0, opacity: 1, transition: { delay: 1 } }}
       data-role={role}
     >
-      <div
-        className={cx(
-          'flex gap-4 group-data-[role=user]/message:px-3 w-full group-data-[role=user]/message:w-fit group-data-[role=user]/message:ml-auto group-data-[role=user]/message:max-w-2xl group-data-[role=user]/message:py-2 rounded-xl',
-          {
-            'group-data-[role=user]/message:bg-muted': true,
-          },
-        )}
-      >
-        <div className="flex justify-center items-center rounded-full ring-1 size-8 shrink-0 ring-border">
-          <SparklesIcon size={14} />
+      <div className="flex gap-3 max-w-[85%] md:max-w-[85%]">
+        <div className="flex justify-center items-center rounded-full bg-primary text-primary-foreground size-8 shrink-0">
+          <SparklesIcon size={16} />
         </div>
 
-        <div className="flex flex-col gap-2 w-full">
-          <div className="flex flex-col gap-4 text-muted-foreground">
-            Hmm...
+        <div className="flex flex-col gap-3 w-full">
+          <div className="bg-muted/50 dark:bg-muted/70 rounded-xl px-4 py-3 text-sm">
+            <div className="flex items-center space-x-2 text-muted-foreground">
+              <div className="flex space-x-1">
+                <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce"></div>
+                <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="h-2 w-2 rounded-full bg-muted-foreground animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+              </div>
+              <span>Thinking...</span>
+            </div>
           </div>
         </div>
       </div>
